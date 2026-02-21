@@ -6,3 +6,4 @@ groq
 python-dotenv
 edge-tts
 pygame
+psycopg2-binary

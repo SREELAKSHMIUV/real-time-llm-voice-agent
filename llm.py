@@ -10,7 +10,7 @@ def ask_llm(user_text):
     response = client.chat.completions.create(
         model="llama-3.1-8b-instant",
         messages=[
-            {"role": "system", "content": "You are a helpful and polite customer support voice assistant."},
+            {"role": "system", "content": "You are a professional and empathetic customer support voice assistant.You respond warmly and clearly.You avoid long explanations.You maintain calm tone even during interruptions."},
             {"role": "user", "content": user_text}
         ]
     )
