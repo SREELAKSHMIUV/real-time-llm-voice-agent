@@ -1,0 +1,30 @@
+[
+  {
+    "issue": "Booking API returning 500 internal server error",
+    "solution": "A 500 error in the Booking API usually indicates a backend failure. Check the application server logs for stack traces, verify database connectivity, ensure required environment variables are set correctly, and restart the booking service if necessary."
+  },
+  {
+    "issue": "Payment deducted but booking not confirmed",
+    "solution": "If payment is deducted but booking is not confirmed, verify the payment gateway transaction status using the transaction ID. Check webhook logs to confirm callback receipt and reconcile the booking record in the database."
+  },
+  {
+    "issue": "User unable to login to the application",
+    "solution": "If a user is unable to login, verify that the authentication service is running properly. Check for token expiration issues, confirm user credentials in the database, and reset the password if required."
+  },
+  {
+    "issue": "OTP not received during login or registration",
+    "solution": "If OTP is not received, check the SMS/email gateway integration status. Verify that the correct contact information is stored, confirm that rate limits are not exceeded, and review messaging service logs."
+  },
+  {
+    "issue": "Database timeout error",
+    "solution": "A database connection timeout usually indicates network issues or high load. Check database server status, verify connection string configuration, inspect firewall rules, and ensure the database service is running properly."
+  },
+  {
+    "issue": "Booking status not updating after payment",
+    "solution": "If booking status is not updated after payment, verify asynchronous job processing, check message queue health, confirm webhook delivery, and validate that the booking update logic executed successfully."
+  },
+  {
+    "issue": "Application running very slow",
+    "solution": "If the application is slow, monitor CPU and memory usage, inspect database query performance, check for unoptimized queries, and review application logs for bottlenecks or blocking operations."
+  }
+]

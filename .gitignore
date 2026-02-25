@@ -3,3 +3,4 @@ env/
 __pycache__/
 *.pyc
 temp_*.mp3
+conversation_transcript.txt

@@ -11,11 +11,13 @@ from dotenv import load_dotenv
 import os
 from elevenlabs.client import ElevenLabs
 from datetime import datetime
-
+from runbook_engine import search_runbook
+import runbook_engine
+print("Runbook file path:",runbook_engine.__file__)
 load_dotenv()
 
 # ===============================
-# DATABASE CONNECTION
+# DATABASE CONNECTION                                                                                                                                                                   
 # ===============================
 
 try:
@@ -207,8 +209,13 @@ while True:
         print("User message insert failed:", e)
 
     save_to_transcript("User", user_text)
+    print("Calling search_runbook.....")
+    result = search_runbook(user_text)
 
-    response = ask_llm(user_text)
+    if result:
+        response = result["solution"]
+    else:
+        response = ask_llm(user_text)
     current_response = response
 
     print("🤖:", response)
@@ -260,7 +267,12 @@ while True:
 
             pygame.mixer.music.stop()
 
-            new_response = ask_llm(new_query)
+            result = search_runbook(new_query)
+
+            if result:
+                new_response = result["solution"]
+            else:
+                new_response = ask_llm(new_query)
             current_response = new_response
 
             print("🤖:", new_response)
