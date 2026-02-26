@@ -1,6 +1,7 @@
 import sounddevice as sd
 import numpy as np
-from faster_whisper import WhisperModel
+from vosk import Model,KaldiRecognizer
+import json
 from llm import ask_llm
 import threading
 import time
@@ -12,8 +13,7 @@ import os
 from elevenlabs.client import ElevenLabs
 from datetime import datetime
 from runbook_engine import search_runbook
-import runbook_engine
-print("Runbook file path:",runbook_engine.__file__)
+
 load_dotenv()
 
 # ===============================
@@ -63,8 +63,9 @@ def save_to_transcript(speaker, text):
 # LOAD WHISPER MODEL
 # ===============================
 
-print("🔄 Loading Tiny Whisper model...")
-whisper_model = WhisperModel("tiny", compute_type="int8")
+print("Loading Vosk model...")
+vosk_model=Model("vosk-model-small-en-us-0.15")
+recognizer=KaldiRecognizer(vosk_model,16000)
 
 # ===============================
 # GLOBAL STATE
@@ -82,15 +83,14 @@ pygame.mixer.init()
 
 def record_audio(duration=1.5, fs=16000):
     audio = sd.rec(int(duration * fs), samplerate=fs,
-                   channels=1, dtype="float32")
+                   channels=1, dtype="int16")
     sd.wait()
     return np.squeeze(audio)
 
 def transcribe(audio):
-    segments, _ = whisper_model.transcribe(audio)
-    text = ""
-    for seg in segments:
-        text += seg.text
+    recognizer.AcceptWaveform((audio.tobytes()))
+    result=recognizer.Result()
+    text=json.loads(result).get("text","")
     return text.strip().lower()
 
 # ===============================
@@ -118,9 +118,7 @@ def speak(text):
 
     speaking = True
     filename = f"temp_{uuid.uuid4()}.mp3"
-
     generate_audio(text, filename)
-
     pygame.mixer.music.load(filename)
     pygame.mixer.music.play()
 
@@ -185,10 +183,8 @@ except Exception as e:
     exit()
 
 while True:
-
-    audio = record_audio(duration=4)
+    audio = record_audio(duration=2)
     user_text = transcribe(audio)
-
     if not user_text:
         continue
 
@@ -211,7 +207,6 @@ while True:
     save_to_transcript("User", user_text)
     print("Calling search_runbook.....")
     result = search_runbook(user_text)
-
     if result:
         response = result["solution"]
     else:
